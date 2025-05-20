@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Pergunta 1</title>
+    <style>
+        /* Estilos básicos para o corpo da página */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ocupa a altura total da tela */
+            margin: 0;
+            background-color: #f4f7f6; /* Cor de fundo suave */
+            transition: background-color 0.8s ease-in-out; /* Transição suave para a cor de fundo */
+            flex-direction: column;
+            text-align: center;
+            color: #333;
+        }
+
+        /* Estilos para o container principal do quiz */
+        .quiz-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%; /* Responsivo */
+            box-sizing: border-box; /* Inclui padding e borda na largura */
+        }
+
+        /* Estilos para o título da pergunta */
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+
+        /* Estilos para os botões de opção */
+        .options-grid {
+            display: grid;
+            gap: 15px; /* Espaçamento entre os botões */
+            margin-top: 20px;
+        }
+
+        .options-grid button {
+            display: block;
+            width: 100%;
+            padding: 18px 25px;
+            margin: 0; /* Removido margin-top/bottom para usar grid gap */
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            font-size: 1.15em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+            color: #555;
+            text-align: left; /* Alinha o texto à esquerda */
+            box-sizing: border-box;
+        }
+
+        .options-grid button:hover:not(:disabled) {
+            background-color: #eef;
+            border-color: #a7d9ff;
+            transform: translateY(-2px); /* Efeito sutil ao passar o mouse */
+        }
+
+        .options-grid button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .options-grid button:disabled {
+            cursor: default;
+            opacity: 0.8;
+        }
+
+        /* Estilos para feedback de acerto */
+        .correct-answer {
+            background-color: #4CAF50 !important; /* Verde */
+            color: white !important;
+            border-color: #4CAF50 !important;
+            pointer-events: none; /* Desabilita o clique */
+        }
+
+        /* Estilos para feedback de erro */
+        .incorrect-answer {
+            background-color: #F44336 !important; /* Vermelho */
+            color: white !important;
+            border-color: #F44336 !important;
+            pointer-events: none; /* Desabilita o clique */
+        }
+
+        /* Estilos para a mensagem de feedback */
+        .feedback-message {
+            margin-top: 30px;
+            font-size: 1.3em;
+            font-weight: bold;
+            display: none; /* Escondido por padrão */
+            opacity: 0; /* Para transição de opacidade */
+            transition: opacity 0.5s ease-in-out;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .feedback-correct {
+            color: #28a745; /* Verde escuro */
+            background-color: #d4edda; /* Fundo verde claro */
+        }
+
+        .feedback-incorrect {
+            color: #dc3545; /* Vermelho escuro */
+            background-color: #f8d7da; /* Fundo vermelho claro */
+        }
+
+        /* Cores de fundo da página para feedback */
+        body.correct-bg {
+            background-color: #e6ffe6; /* Verde muito claro */
+        }
+
+        body.incorrect-bg {
+            background-color: #ffe6e6; /* Vermelho muito claro */
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+ <h1>Em "Vingadores: Ultimato", qual frase Thor usa antes de decapitar Thanos?</h1>
+        <div class="options-grid">
+            <button data-correct="false">Eu sou inevitável.</button>
+            <button data-correct="true">Deveria ter mirado na cabeça.</button>
+            <button data-correct="false">Vingadores, avante!</button>
+            <button data-correct="false">Eu sou o homem de ferro.</button>
+        </div>
+        <p id="feedback" class="feedback-message"></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.options-grid button');
+            const feedbackMessage = document.getElementById('feedback');
+            const body = document.body;
+
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Desabilita todos os botões após a primeira resposta
+                    buttons.forEach(btn => {
+                        btn.disabled = true;
+                        btn.style.cursor = 'default';
+                    });
+
+                    const isCorrect = button.dataset.correct === 'true';
+
+                    if (isCorrect) {
+                        button.classList.add('correct-answer');
+                        body.classList.add('correct-bg');
+                        feedbackMessage.textContent = 'Parabéns! Resposta Correta!';
+                        feedbackMessage.classList.add('feedback-correct');
+                    } else {
+                        button.classList.add('incorrect-answer');
+                        body.classList.add('incorrect-bg');
+                        feedbackMessage.textContent = 'Ops! Resposta Incorreta.';
+                        feedbackMessage.classList.add('feedback-incorrect');
+
+                        // Opcional: destaque a resposta correta
+                        buttons.forEach(btn => {
+                            if (btn.dataset.correct === 'true') {
+                                btn.classList.add('correct-answer');
+                            }
+                        });
+                    }
+                    feedbackMessage.style.display = 'block'; // Exibe a mensagem
+                    setTimeout(() => { // Mostra a mensagem com transição
+                        feedbackMessage.style.opacity = 1;
+                    }, 50);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
